@@ -1,0 +1,20 @@
+{% if ssh.enable is undefined or ssh.enable is sameas true %}
+{# EdgeSwitch enables SSH by default, nothing to print. #}
+{% elif ssh.enable is sameas false %}
+no ip ssh server enable
+{% endif %}
+{% if ssh.port is undefined or ssh.port == 22 %}
+{# EdgeSwitch defaults to SSH on port 22, nothing to print. #}
+{% else %}
+ip ssh port {{ ssh.port }}
+{% endif %}
+{% if ssh.version is undefined or ssh.version == 2 %}
+{# EdgeSwitch defaults to SSHv2, nothing to print. #}
+{% elif ssh.version == 1 %}
+ip ssh protocol 1
+{% endif %}
+{% if ssh.timeout is undefined or ssh.timeout == 160 %}
+{# EdgeSwitch defaults to SSH timeout of 160 seconds, nothing to print. #}
+{% else %}
+sshcon timeout { ssh.timeout }
+{% endif %}

@@ -1,0 +1,5 @@
+vlan database
+{% if vlan is defined %}
+vlan {{ vlan.ids|join(",") }}
+{% endif %}
+exit

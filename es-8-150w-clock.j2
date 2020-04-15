@@ -1,0 +1,21 @@
+{% if ntp.client_mode is undefined or ntp.client_mode == unicast %}
+{# EdgeSwitch defaults to unicast SNTP client mode, nothing to print. #}
+{% elif ntp.client_mode == broadcast %}
+sntp client mode broadcast
+{% endif %}
+{% if ntp.server is undefined %}
+{# EdgeSwitch defaults to [1|2].ubnt.pool.ntp.org, nothing to print #}
+{% elif ntp.server is defined %}
+{# Disable Ubiquiti NTP servers if you set your own NTP servers #}
+no sntp server "1.ubnt.pool.ntp.org"
+no sntp server "2.ubnt.pool.ntp.org"
+{% for server in ntp.servers %}
+sntp server {{ server }}
+{% endfor %}
+{% endif %}
+{# EdgeSwitch defaults to no clock summer-time, we don't handle this (yet) #}
+{% if clock.offset_hours is undefined or clock.offset_hours == 0 %}
+{# EdgeSwitch defauls to UTC, nothing to print. #}
+{% else %}
+clock clock {{ clock.offset_hours }} minutes {{ clock.offset_minutes }} zone "{{ clock.acronym }}"
+{% endif %}

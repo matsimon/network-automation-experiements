@@ -1,0 +1,5 @@
+{#{% if telnet.server is undefined or if telnet.server sameas false %}
+{# EdgeSwitch defaults to disabled Telnet server, nothing to print. #}
+{#{% elif telnet.server sameas true %}
+ip telnet server enable
+{% endif %}#}

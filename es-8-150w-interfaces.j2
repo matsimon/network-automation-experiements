@@ -1,0 +1,19 @@
+{% for interface in interfaces %}
+interface {{ interface['name'] }}
+{% if interface['description'] is defined %}
+description {{ interface['description'] }}
+{% endif %}
+{% if interface['edgeport'] is undefined or interface['edgeport'] is sameas false %}
+{# Edgeswitch defaults to no spanning-tree edgeport, nothing to print #}
+{% elif interface['edgeport'] is sameas true %}
+spanning-tree edgeport
+{% endif %}
+switchport mode {{ interface['mode'] }}
+{% if interface['mode'] == 'access' %}
+switchport access vlan {{ interface['access_vlan'] }}
+{% endif %}
+{% if interface['mode'] == 'trunk' %}
+switchport trunk allowed vlan {{ interface['allowed_vlans'] }}
+{% endif %}
+exit
+{% endfor %}

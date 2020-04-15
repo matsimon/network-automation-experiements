@@ -1,0 +1,6 @@
+{% if logging is defined %}
+{% for host in logging.hosts %}
+logging host {{ host['target'] }} {{ host['type'] }} 514 {{ host['level'] }}
+{% endfor %}
+logging cli-command
+{% endif %}

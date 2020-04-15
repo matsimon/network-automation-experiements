@@ -1,0 +1,45 @@
+!Current Configuration:
+!
+!System Description "EdgeSwitch 8-Port 150W, 1.9.0-lite, Linux 3.6.5-03329b4a, 1.2.0.5192732"
+!System Software Version "1.9.1-lite"
+!System Up Time          "0 days 0 hrs 37 mins 23 secs"
+!Additional Packages     QOS,IPv6 Management,Routing
+!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
+!
+hostname "{{ inventory_hostname }}"
+{% if telnet.port is undefined or telnet.port == 23 %}
+{# EdgeSwitch defaults telnet on port 23, nothing to print #}
+{% else %}
+ip telnet {{ telnet.port }}
+{% endif %}
+network protocol none
+network parms {{ mgmt_v4_address }} {{ mgmt.v4_netmask }} {{ mgmt.v4_gw }}
+{#{% include './templates/es-8-150w-vlans.j2' %}#}
+{% if mgmt.vlan is defined %}{# EdgeSwitch defaults to VLAN 1 as management VLAN #}
+network mgmt_vlan {{ mgmt.vlan }}
+{% endif %}
+configure
+no device analytics
+{% include './templates/es-8-150w-clock.j2' %}
+{% include './templates/es-8-150w-ssh.j2' %}
+{% include './templates/es-8-150w-telnet.j2' %}
+{% if search_domain is defined %}
+ip domain name "{{ search_domain }}"
+{% endif %}
+{% if dns_servers is defined %}
+ip name server {{ dns_servers|join(" ") }}
+{% endif %}
+{% include './templates/es-8-150w-logging.j2' %}
+voice vlan
+line console
+exit
+line telnet
+exit
+line ssh
+exit
+{% include './templates/es-8-150w-spanning-tree.j2' %}
+snmp-server sysname "{{ inventory_hostname }}"
+!
+{% include './templates/es-8-150w-auto-voip.j2' %}
+{% include './templates/es-8-150w-interfaces.j2' %}
+exit
