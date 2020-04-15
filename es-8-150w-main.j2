@@ -15,7 +15,8 @@ ip telnet {{ telnet.port }}
 network protocol none
 network parms {{ mgmt_v4_address }} {{ mgmt.v4_netmask }} {{ mgmt.v4_gw }}
 {#{% include './templates/es-8-150w-vlans.j2' %}#}
-{% if mgmt.vlan is defined %}{# EdgeSwitch defaults to VLAN 1 as management VLAN #}
+{% if mgmt.vlan is defined %}
+{# EdgeSwitch otherwise defaults to VLAN 1 as management VLAN #}
 network mgmt_vlan {{ mgmt.vlan }}
 {% endif %}
 configure
