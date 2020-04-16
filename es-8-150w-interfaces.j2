@@ -5,15 +5,30 @@ description {{ interface['description'] }}
 {% endif %}
 {% if interface['edgeport'] is undefined or interface['edgeport'] is sameas false %}
 {# Edgeswitch defaults to no spanning-tree edgeport, nothing to print #}
+{% elif interface['edgeport'] is undefined and interface['mode'] == 'access' %}
+{# Default access mode ports to 'edgeport' unless explicitely disabled #}
+spanning-tree edgeport
 {% elif interface['edgeport'] is sameas true %}
 spanning-tree edgeport
 {% endif %}
+{% if interface['mode'] is undefined or interface['mode'] == 'general' %}
+{# EdgeSwitch defaults to general mode, if undefined OR explicitely set, don't print anything #}
+{# Currently only access and trunk mode are covered by this template #}
+{% else %}
 switchport mode {{ interface['mode'] }}
-{% if interface['mode'] == 'access' %}
-switchport access vlan {{ interface['access_vlan'] }}
 {% endif %}
-{% if interface['mode'] == 'trunk' %}
+{% if interface['mode'] is undefined or interface['mode'] == 'general' %}
+{# Todo: Support general mode? #}
+{# vlan ingressfilter is enabled by - good - the documentation is actually wrong #}
+{% elif interface['mode'] == 'access' %}
+spanning-tree guard root
+switchport access vlan {{ interface['access_vlan'] }}
+{% elif interface['mode'] == 'trunk' %}
+spanning-tree guard loop
 switchport trunk allowed vlan {{ interface['allowed_vlans'] }}
+{% if interface['native_vlan'] is defined %}
+switchport trunk native vlan {{ interface['native_vlan'] }}
+{% endif %}
 {% endif %}
 exit
 {% endfor %}
