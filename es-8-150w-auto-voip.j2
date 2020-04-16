@@ -2,7 +2,7 @@
 {% if auto_voip.vlan is defined %}
 auto_voip vlan {{ auto_voip.vlan }}
 {% endif %}
-{% for entry in auto_voip.oui %}
+{% for entry in auto_voip.ouis %}
 auto_voip oui {{ entry['prefix'] }} oui-desc "{{ entry['description'] }}"
 {% endfor %}
 {% endif %}
