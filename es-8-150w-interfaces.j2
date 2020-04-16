@@ -13,8 +13,17 @@ spanning-tree edgeport
 {% endif %}
 {% if interface['mode'] is undefined or interface['mode'] == 'general' %}
 {# EdgeSwitch defaults to general mode, if undefined OR explicitely set, don't print anything #}
-{# Currently only access and trunk mode are covered by this template #}
+{% if interface['vlan_pvid'] is defined %}
+vlan pvid {{ interface['vlan_pvid'] }}
+{% endif %}
+{% if interface['vlan_participation'] is defined %}
+vlan participation include {{ interface['vlan_participation'] }}
+{% endif %}
+{% if interface['vlan_tagging'] is defined %}
+vlan tagging {{ interface['vlan_tagging'] }}
+{% endif %}
 {% else %}
+{# Currently beyond general, only access and trunk mode are actually covered by this template #}
 switchport mode {{ interface['mode'] }}
 {% endif %}
 {% if interface['mode'] is undefined or interface['mode'] == 'general' %}
