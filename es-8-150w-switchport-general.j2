@@ -1,0 +1,11 @@
+{% if interface['vlan_pvid'] is defined %}
+vlan pvid {{ interface['vlan_pvid'] }}
+{% endif %}
+{% if interface['vlan_participation'] is defined %}
+vlan participation include {{ interface['vlan_participation'] }}
+{% endif %}
+{% if interface['vlan_tagging'] is defined %}
+vlan tagging {{ interface['vlan_tagging'] }}
+{% endif %}
+{# Todo: Support more in general mode? #}
+{# vlan ingressfilter is enabled by default on EdgeSwitch - good - the documentation is actually wrong #}

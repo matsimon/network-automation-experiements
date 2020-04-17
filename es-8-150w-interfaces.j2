@@ -11,33 +11,15 @@ spanning-tree edgeport
 {% elif interface['edgeport'] is sameas true %}
 spanning-tree edgeport
 {% endif %}
+{# INFO: Only general, access and trunk mode are actually covered by this template for now. #}
 {% if interface['mode'] is undefined or interface['mode'] == 'general' %}
-{# EdgeSwitch defaults to general mode, if undefined OR explicitely set, don't print anything #}
-{% if interface['vlan_pvid'] is defined %}
-vlan pvid {{ interface['vlan_pvid'] }}
-{% endif %}
-{% if interface['vlan_participation'] is defined %}
-vlan participation include {{ interface['vlan_participation'] }}
-{% endif %}
-{% if interface['vlan_tagging'] is defined %}
-vlan tagging {{ interface['vlan_tagging'] }}
-{% endif %}
-{% else %}
-{# Currently beyond general, only access and trunk mode are actually covered by this template #}
-switchport mode {{ interface['mode'] }}
-{% endif %}
-{% if interface['mode'] is undefined or interface['mode'] == 'general' %}
-{# Todo: Support general mode? #}
-{# vlan ingressfilter is enabled by - good - the documentation is actually wrong #}
+{# EdgeSwitch defaults to general mode. If undefined OR explicitely set, don't print anything #}
+{% include './templates/es-8-150w-switchport-general.j2' %}
+{# TODO handle vlan ingressfilter. It is enabled by default - good - the documentation is actually wrong about disabled #}
 {% elif interface['mode'] == 'access' %}
-spanning-tree guard root
-switchport access vlan {{ interface['access_vlan'] }}
+{% include './templates/es-8-150w-switchport-access.j2' %}
 {% elif interface['mode'] == 'trunk' %}
-spanning-tree guard loop
-switchport trunk allowed vlan {{ interface['allowed_vlans'] }}
-{% if interface['native_vlan'] is defined %}
-switchport trunk native vlan {{ interface['native_vlan'] }}
-{% endif %}
+{% include './templates/es-8-150w-switchport-trunk.j2' %}
 {% endif %}
 exit
 {% endfor %}
