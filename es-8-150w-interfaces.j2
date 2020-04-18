@@ -1,5 +1,10 @@
 {% for interface in interfaces %}
 interface {{ interface['name'] }}
+{% if interface['operstatus'] is undefined or interface['operstatus'] == 'enable' %}
+{# Edgeswitch defaults to enabling interfaces, nothing to print #}
+{% elif interface['operstatus'] == 'disable' %}
+shutdown
+{% endif %}
 {% if interface['description'] is defined %}
 description {{ interface['description'] }}
 {% endif %}
@@ -15,11 +20,14 @@ spanning-tree edgeport
 {% if interface['mode'] is undefined or interface['mode'] == 'general' %}
 {# EdgeSwitch defaults to general mode. If undefined OR explicitely set, don't print anything #}
 {% include './templates/es-8-150w-switchport-general.j2' %}
+
 {# TODO handle vlan ingressfilter. It is enabled by default - good - the documentation is actually wrong about disabled #}
 {% elif interface['mode'] == 'access' %}
 {% include './templates/es-8-150w-switchport-access.j2' %}
+
 {% elif interface['mode'] == 'trunk' %}
 {% include './templates/es-8-150w-switchport-trunk.j2' %}
+
 {% endif %}
 exit
 {% endfor %}
