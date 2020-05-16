@@ -1,0 +1,4 @@
+{% if vlan_routing is defined %}
+{% for vlan in vlan_routing %}                                                                                                                                             vlan routing {{ vlan_routed.id }} "{{ vlan_routed.interfaceid }}"                                                                                                           {% endfor %}
+vlan routing {{ vlan.id }} {{ vlan.interface_id }}
+{% endif %}

@@ -1,0 +1,21 @@
+{% if ntp.client_mode is undefined or ntp.client_mode == unicast %}
+{# M4300's default to unicast SNTP client mode, nothing to print. #}
+{% elif ntp.client_mode == broadcast %}
+sntp client mode broadcast
+{% endif %}
+{% if ntp.server is undefined %}
+{# M4300's default to time-[a|c].netgear.com, nothing to print #}
+{% elif ntp.server is defined %}
+{# Disable Ubiquiti NTP servers if you set your own NTP servers #}
+no sntp server "time-a.netgear.com"
+no sntp server "time-c.netgear.com"
+{% for server in ntp.servers %}
+sntp server {{ server }}
+{% endfor %}
+{% endif %}
+{# M4300's efault to no clock summer-time, we don't handle this (yet) #}
+{% if clock.offset_hours is undefined or clock.offset_hours == 0 %}
+{# M4300's defaul to UTC, nothing to print. #}
+{% else %}
+clock {{ clock.offset_hours }} minutes {{ clock.offset_minutes }} zone "{{ clock.acronym }}"
+{% endif %}

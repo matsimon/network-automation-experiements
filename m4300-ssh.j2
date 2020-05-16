@@ -1,0 +1,20 @@
+{% if ssh.enable is undefined or ssh.enable is sameas false %}
+{# M4300's disable SSH by default, nothing to print. #}
+{% elif ssh.enable is sameas true %}
+ip ssh server enable
+{% endif %}
+{% if ssh.port is undefined or ssh.port == 22 %}
+{# M4300's default to SSH on port 22, nothing to print. #}
+{% else %}
+ip ssh port {{ ssh.port }}
+{% endif %}
+{% if sshcon.maxsessions is undefined or sshcon.timeout == 5 %}
+{# M4300's default to maximum of 5 parallel SSH sessions, nothing to print. #}
+{% else %}
+sshcon maxsessions { sshcon.maxsessions }
+{% endif %}
+{% if ssh.timeout is undefined or ssh.timeout == 5 %}
+{# M4300's default to SSH timeout of 5 minutes, nothing to print. #}
+{% else %}
+sshcon timeout { sshcon.timeout }
+{% endif %}

@@ -1,0 +1,66 @@
+!Current Configuration:
+!
+!System Description "M4300-28G-PoE+ ProSAFE 24-port 1G PoE+ and 2-port 10GBASE-T and 2-port 10G SFP+, 12.0.11.10, B1.0.0.15"
+!System Software Version "12.0.11.10"
+!System Up Time          "0 days 0 hrs 13 mins 19 secs"
+!Additional Packages     QOS,Multicast,IPv6,IPv6 Management,Stacking,Routing
+!Current SNTP Synchronized Time: SNTP Last Attempt Status Is Not Successful
+!
+hostname "{{ inventory_hostname }}"
+{% if telnet.port is undefined or telnet.port == 23 %}
+{# M4300's default to telnet on port 23, nothing to print #}
+{% else %}
+ip telnet {{ telnet.port }}
+{% endif %}
+vlan database
+{% include './templates/m4300-vlans.j2' %}
+{% include './templates/m4300-vlan-routing.j2' %}
+exit
+
+{% include './templates/m4300-ssh.j2' %}
+configure
+{% include './templates/m4300-clock.j2' %}
+stack
+{% include './templates/m4300-stacking.j2' %}
+exit
+{% include './templates/m4300-stack-priority.j2' %}
+{% if search_domain is defined %}
+ip domain name "{{ search_domain }}"
+{% endif %}
+{# M4300's default to 8.8.8.8 as resolver. If undefined, nothing to print, if defined use the ones defined #}
+{% if dns_servers is defined %}
+no ip name server 8.8.8.8
+ip name server {{ dns_servers|join(" ") }}
+{% endif %}
+{% include './templates/m4300-logging.j2' %}
+username "admin" password 0a51d780be1a0240b8cc7c69fe0479dbf07644e1094b25fb43ebe2fa72f649e42ad9711bf5c33f9a7eb88efd8b9945347b264e0c52b3a47db05f886caae9f42b level 15 encrypted
+username snmpv3 authentication "admin" md5
+line console
+exit
+
+line telnet
+exit
+
+line ssh
+exit
+
+!
+{% include './templates/m4300-spanning-tree.j2' %}
+snmp-server sysname "foo"
+{% include './templates/m4300-auto-voip.j2' %}
+
+{% include './templates/m4300-interfaces.j2' %}
+
+interface vlan 1
+routing
+ip address dhcp
+exit
+
+router rip
+exit
+router ospf
+exit
+ipv6 router ospf
+exit
+
+exit

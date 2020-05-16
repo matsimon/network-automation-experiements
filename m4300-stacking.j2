@@ -1,0 +1,5 @@
+{# Stacking must be defined properly, even on non-stacked models #}
+{% for member in in stack_members %}
+vlan name {{ member.id }} "{{ member.type }}"
+{% endfor %}
+exit

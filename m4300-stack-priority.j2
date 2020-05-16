@@ -1,0 +1,8 @@
+{# Defining a stack preference is usually recommended but not required by M4300 #}
+{% if stack_priorities defined %}
+vlan {{ vlan_list }}
+{% for member in stack_priorities %}
+switch {{ member.id }} {{ member.priority }}
+{% endfor %}
+{% endif %}
+exit

@@ -1,0 +1,7 @@
+{# M4300's would support syslog with TLS, but this template doesn't yet handle this (yet) #}
+{% if logging is defined %}
+{% for host in logging.hosts %}
+logging host {{ host['target'] }} {{ host['type'] }} 514 {{ host['level'] }}
+{% endfor %}
+logging cli-command
+{% endif %}

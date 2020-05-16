@@ -1,0 +1,16 @@
+{% if spanning_tree.bpdu_guard is undefined or spanning_tree.bpdu_guard is sameas false %}
+{# M4300's default to disabled BPDU guard, nothing to print #}
+{% else %}
+spanning-tree bpduguard
+{% endif %}
+{% if spanning_tree.mode is undefined or spanning_tree.mode == 'rstp' %}
+{# M4300's defaults to RSTP, nothing to print #}
+{% else %}
+spanning-tree mode {{ spanning_tree.mode }}
+{% endif %}
+{% if spanning_tree.bridge_priority is undefined or spanning_tree.bridge_priority == 32768 %}
+{# M4300's default to 32768, nothing to print #}
+{% else %}
+spanning-tree mst priority 0 {{ spanning_tree.bridge_priority }}
+{# We don't support MSTP in this template, nonetheless (M)STP instance 0 sets the bridge priority in (R)STP modes #}
+{% endif %}
